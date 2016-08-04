@@ -28,13 +28,13 @@ If you want to clean the build artifacts execute this command:
 
 ## Using this Library
 
-1. Add the JAR as a dependency in your project. The steps to do this
+ -  Add the JAR as a dependency in your project. The steps to do this
 will vary depending upon your build tool. In gradle, this can be done
 by adding the following line to the dependencies: 
 
 `compile files ('path/to/jar/b2-bundle-utils-[version].jar)`
 
-2. Configure the servlet in web.xml:
+ - Configure the servlet in web.xml:
  
 ```xml
 <servlet>
