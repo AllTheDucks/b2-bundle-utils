@@ -6,7 +6,7 @@ JavaScript.
 ## Building
 
 The build tool used is called [Gradle](http://www.gradle.org/). It 
-will do all the work to build the building block, including downloading 
+will do all the work to build the library, including downloading 
 dependencies, compiling java classes and zipping up the JAR. This is all
 done with a single command - no installation necessary. From the root of
 the project execute the following command:
@@ -16,7 +16,7 @@ the project execute the following command:
 **GNU/Linux & Mac OSX**: `./gradlew build`
 
 The built file will be output to the 
-`build/libs/atd-b2-bundle-utils-[version].jar` location.
+`build/libs/b2-bundle-utils-[version].jar` location.
 
 ## Cleaning
 
@@ -80,7 +80,7 @@ public class Example {
     // Simply return the name of the building block
     public String getPluginTitle() {
         // plugin.name=Example Building Block
-        return bundleService.getLocalisationString("plugin.title");
+        return bundleService.getLocalisationString("plugin.name");
     }
 
     // Demonstrates substitutions
