@@ -26,6 +26,9 @@ public class JsBundleServlet extends HttpServlet {
     private String handle;
     private Id pluginId;
 
+    private String b2;
+    private String jsPackage;
+
     @Override
     public void init() throws ServletException {
         vendorId = getServletContext().getInitParameter("blackboard.plugin.vendor");
@@ -38,10 +41,39 @@ public class JsBundleServlet extends HttpServlet {
             throw new ServletException("Must specify b2 handle (blackboard.plugin.handle) in the web.xml");
         }
 
+        String packageStr = getServletContext().getInitParameter("atd.bundle.package");
+        if(packageStr == null || packageStr.trim().isEmpty()) {
+            packageStr = "atd.bundle";
+        }
+
+        this.b2 = String.format("%s['%s-%s']", packageStr, vendorId, handle);
+
+        StringBuilder packageDef = new StringBuilder();
+        StringBuilder jsPackageBuilder = new StringBuilder();
+        final String[] split = packageStr.split("\\.");
+        for (int i = 0; i < split.length; i++) {
+            String s = split[i];
+            if(i > 0) {
+                packageDef.append(".");
+            }
+            packageDef.append(s);
+            jsPackageBuilder.append("if(typeof ")
+                    .append(packageDef)
+                    .append(" === 'undefined') ")
+                    .append(packageDef)
+                    .append(" = {};");
+        }
+        jsPackageBuilder.append(this.b2).append(" = {};");
+
+        this.jsPackage = jsPackageBuilder.toString();
+
         PlugInManager pluginMgr = PlugInManagerFactory.getInstance();
         PlugIn plugin = pluginMgr.getPlugIn(vendorId, handle);
 
         this.pluginId = plugin.getId();
+
+
+
     }
 
     @Override
@@ -55,14 +87,9 @@ public class JsBundleServlet extends HttpServlet {
         final BundleManagerEx bm = BundleManagerExFactory.getInstance();
         final ResourceBundle bundle = bm.getPluginBundle(pluginId).getResourceBundle();
 
-        String b2 = String.format("atd.bundles['%s-%s']", vendorId, handle);
-
         StringBuilder sb = new StringBuilder();
-        sb.append("if(typeof atd === 'undefined') atd = {};")
-                .append("if(typeof atd.bundles === 'undefined') atd.bundles = {};")
-                .append(b2)
-                .append(" = {};")
-                .append(b2)
+        sb.append(this.jsPackage)
+                .append(this.b2)
                 .append(".keys = {");
         final Enumeration<String> keys = bundle.getKeys();
         while (keys.hasMoreElements()) {
